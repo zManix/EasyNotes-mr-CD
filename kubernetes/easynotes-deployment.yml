@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: easynotes
+  namespace: easynotes
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: easynotes
+  template:
+    metadata:
+      labels:
+        app: easynotes
+    spec:
+      containers:
+      - name: easynotes
+        image: ghcr.io/dein-username/easynotes:1.0.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        env:
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              name: db-secrets
+              key: db-host
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: db-secrets
+              key: db-user
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-secrets
+              key: db-password
+        - name: DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: db-secrets
+              key: db-name
+      imagePullSecrets:
+      - name: github-registry
